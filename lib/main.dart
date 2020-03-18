@@ -1,8 +1,8 @@
-import './widgets/chart.dart';
-import './widgets/transaction_list.dart';
 import 'package:flutter/material.dart';
 
+import './widgets/chart.dart';
 import './widgets/new_transaction.dart';
+import './widgets/transaction_list.dart';
 import 'model/Transaction.dart';
 
 void main() => runApp(MyApp());
@@ -18,8 +18,8 @@ class MyApp extends StatelessWidget {
           textTheme: ThemeData.light()
               .textTheme
               .copyWith(title: TextStyle(fontSize: 20)),
-          primarySwatch: Colors.red,
-          primaryColor: Colors.red,
+          primarySwatch: Colors.purple,
+          primaryColor: Colors.purple,
           accentColor: Colors.amber,
           fontFamily: 'QuickSand'),
     );
@@ -41,14 +41,20 @@ class _MyHomePageState extends State<MyHomePage> {
     Transaction(id: 't2', title: 'Grocery', amount: 500, date: DateTime.now()),*/
   ];
 
-  void _addTxn(String txTitle, double txAmount) {
+  void _addTxn(String txTitle, double txAmount, DateTime dateTime) {
     final txn = Transaction(
         title: txTitle,
         amount: txAmount,
-        date: DateTime.now(),
-        id: DateTime.now().toString());
+        date: dateTime == null ? DateTime.now() : dateTime,
+        id: dateTime == null ? DateTime.now().toString() : dateTime.toString());
     setState(() {
       _list.add(txn);
+    });
+  }
+
+  void _deleteTxn(String id) {
+    setState(() {
+      _list.removeWhere((tx) => tx.id == id);
     });
   }
 
@@ -89,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
               elevation: 30,
               color: Colors.blue,
             ),
-            TransactionList(_list)
+            TransactionList(_list, _deleteTxn)
           ],
         ),
       ),
