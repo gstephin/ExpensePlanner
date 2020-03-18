@@ -2,8 +2,7 @@
 
 My First Flutter Application
 
-# Usage of List view,Splitting App into widgets,stateless and stateful widgets,function calls,Theming, Modal Bottom Sheet,
-## Getting Started
+# Usage of List view,Splitting App into widgets,stateless and stateful widgets,function calls,Theming, Modal Bottom Sheet, Date picker
 
 This project is a starting point for a Flutter application.
 
