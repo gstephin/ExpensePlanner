@@ -1,9 +1,9 @@
+import 'package:expense_planner/widgets/chart.dart';
 import 'package:flutter/material.dart';
 
-import './widgets/chart.dart';
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
-import 'model/Transaction.dart';
+import 'db_expense.dart';
 
 void main() => runApp(MyApp());
 
@@ -36,25 +36,19 @@ class _MyHomePageState extends State<MyHomePage> {
   String titleInput;
 
   String amountInput;
-  final List<Transaction> _list = [
-/*    Transaction(id: 't1', title: 'Shopping', amount: 600, date: DateTime.now()),
-    Transaction(id: 't2', title: 'Grocery', amount: 500, date: DateTime.now()),*/
-  ];
 
-  void _addTxn(String txTitle, double txAmount, DateTime dateTime) {
-    final txn = Transaction(
-        title: txTitle,
-        amount: txAmount,
-        date: dateTime == null ? DateTime.now() : dateTime,
-        id: dateTime == null ? DateTime.now().toString() : dateTime.toString());
-    setState(() {
-      _list.add(txn);
-    });
+  @override
+  void initState() {
+    super.initState();
   }
 
-  void _deleteTxn(String id) {
+  void _addTxn(String txTitle, int txAmount, int dateTime) {
+    setState(() {});
+  }
+
+  void _deleteTxn(int id) {
     setState(() {
-      _list.removeWhere((tx) => tx.id == id);
+      DatabaseHelper.instance.deleteTx(id);
     });
   }
 
@@ -71,40 +65,47 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Expense Planner'),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () => _addNewTxn(context),
-            icon: Icon(Icons.add),
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Card(
-              child: Container(
-                child: Chart(_list),
-                width: double.infinity,
-              ),
-              clipBehavior: Clip.antiAlias,
-              elevation: 30,
-              color: Colors.blue,
+    return FutureBuilder(
+        future: DatabaseHelper.instance.listTx(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Expense Planner'),
+              actions: <Widget>[
+                IconButton(
+                  onPressed: () => _addNewTxn(context),
+                  icon: Icon(Icons.add),
+                )
+              ],
             ),
-            TransactionList(_list, _deleteTxn)
-          ],
-        ),
-      ),
-      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _addNewTxn(context),
-        child: Icon(Icons.add),
-      ),
-    );
+            body: SingleChildScrollView(
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Card(
+                    child: Container(
+                      child: snapshot.hasData
+                          ? Chart(snapshot.data)
+                          : Text('No Data'),
+                      width: double.infinity,
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    elevation: 30,
+                    color: Colors.blue,
+                  ),
+                  TransactionList(snapshot.data, _deleteTxn)
+                ],
+              ),
+            ),
+            floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => _addNewTxn(context),
+              child: Icon(Icons.add),
+            ),
+          );
+        });
   }
 }

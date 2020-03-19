@@ -5,7 +5,7 @@ import '../model/Transaction.dart';
 import '../widgets/chart_bar.dart';
 
 class Chart extends StatelessWidget {
-  final List<Transaction> recentTransactions;
+  final List<TransactionExpense> recentTransactions;
 
   Chart(this.recentTransactions);
 
@@ -20,9 +20,10 @@ class Chart extends StatelessWidget {
       final weekDay = DateTime.now().subtract(Duration(days: index));
       double totalSum = 0.0;
       for (var i = 0; i < recentTransactions.length; i++) {
-        if (recentTransactions[i].date.day == weekDay.day &&
-            recentTransactions[i].date.month == weekDay.month &&
-            recentTransactions[i].date.year == weekDay.year) {
+       DateTime dateTime= new DateTime.fromMillisecondsSinceEpoch(recentTransactions[i].date);
+        if (dateTime.day == weekDay.day &&
+            dateTime.month == weekDay.month &&
+            dateTime.year == weekDay.year) {
           totalSum += recentTransactions[i].amount;
         }
       }

@@ -5,7 +5,7 @@ import '../model/Transaction.dart';
 
 // ignore: must_be_immutable
 class TransactionList extends StatelessWidget {
-  final List<Transaction> list;
+  final List<TransactionExpense> list;
   Function handler;
 
   TransactionList(this.list, this.handler);
@@ -15,7 +15,7 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 500,
-      child: list.isEmpty
+      child: list == null
           ? Column(
               children: <Widget>[
                 SizedBox(height: 10),
@@ -56,12 +56,13 @@ class TransactionList extends StatelessWidget {
                       list[index].title,
                       style: Theme.of(ctx).textTheme.title,
                     ),
-                    subtitle: Text(
-                        DateFormat.yMMMMd('en_US').format(list[index].date)),
+                    subtitle: Text(DateFormat.yMMMMd('en_US').format(
+                        DateTime.fromMillisecondsSinceEpoch(
+                            (list[index].date)))),
                     trailing: IconButton(
                       color: Colors.red,
                       icon: Icon(Icons.delete),
-                      onPressed: ()=>handler(list[index].id),
+                      onPressed: () => handler(list[index].id),
                     ),
                   ),
                 );

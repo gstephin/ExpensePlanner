@@ -1,5 +1,9 @@
+import 'package:expense_planner/model/Transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+
+import '../db_expense.dart';
 
 // ignore: must_be_immutable
 class NewTransaction extends StatefulWidget {
@@ -16,6 +20,7 @@ class _NewTransactionState extends State<NewTransaction> {
 
   final _amountController = TextEditingController();
   DateTime _dateTime;
+  final dbHelper = DatabaseHelper.instance;
 
   void _showDatePicker() {
     showDatePicker(
@@ -24,24 +29,43 @@ class _NewTransactionState extends State<NewTransaction> {
       firstDate: DateTime(2019),
       lastDate: DateTime.now(),
     ).then((selectedDate) {
-      if(selectedDate==null){
+      if (selectedDate == null) {
         return;
       }
       setState(() {
-        _dateTime= selectedDate;
-
+        _dateTime = selectedDate;
       });
     });
   }
 
   void _submit() {
     final title = _titleController.text;
-    final amount = double.parse(_amountController.text);
+    final amount = int.parse(_amountController.text);
     if (title.isEmpty || amount < 1) {
       return;
     }
-    widget.handler(title, amount,_dateTime);
+
+    widget.handler(title, amount, _dateTime.millisecondsSinceEpoch);
+    _insert(TransactionExpense(
+        id: _dateTime.millisecondsSinceEpoch,
+        amount: amount,
+        date: _dateTime.millisecondsSinceEpoch,
+        title: title));
     Navigator.of(context).pop();
+  }
+
+  void _insert(TransactionExpense expense) async {
+    // row to insert
+    int id = await dbHelper.insertTx(expense);
+    Fluttertoast.showToast(
+        msg: "Transaction inserted..!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
   }
 
   @override
@@ -73,7 +97,9 @@ class _NewTransactionState extends State<NewTransaction> {
               height: 70,
               child: Row(
                 children: <Widget>[
-                  Text(_dateTime==null?'No Date Chosen':DateFormat.yMd('en_US').format(_dateTime)),
+                  Text(_dateTime == null
+                      ? 'No Date Chosen'
+                      : DateFormat.yMd('en_US').format(_dateTime)),
                   FlatButton(
                     textColor: Theme.of(context).primaryColor,
                     child: Text(

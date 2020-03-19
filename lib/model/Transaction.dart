@@ -1,10 +1,19 @@
 import 'package:flutter/foundation.dart';
 
-class Transaction {
-  String id;
+class TransactionExpense {
+  int id;
   String title;
-  double amount;
-  DateTime date;
+  int amount;
+  int date;
 
-  Transaction({@required this.id, this.title, this.amount, this.date});
+  Map<String, dynamic> toMap() {
+    return {'id': id, 'title': title, 'amount': amount, 'date': date};
+  }
+
+  TransactionExpense({@required this.id, this.title, this.amount, this.date});
+
+  @override
+  String toString() {
+    return 'Transaction{id: $id, tite: $title, amount: $amount, date:$date}';
+  }
 }
