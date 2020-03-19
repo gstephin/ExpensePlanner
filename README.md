@@ -1,4 +1,4 @@
-# expense_planner
+# Expense Planner
 
 My First Flutter Application
 
