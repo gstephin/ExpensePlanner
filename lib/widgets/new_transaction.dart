@@ -60,70 +60,75 @@ class _NewTransactionState extends State<NewTransaction> {
     Fluttertoast.showToast(
         msg: "Transaction inserted..!",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.BOTTOM,
         timeInSecForIos: 1,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0
-    );
+        fontSize: 16.0);
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Card(
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Title',
+    return SingleChildScrollView(
+      child: Card(
+        child: Container(
+          padding: EdgeInsets.only(
+              top: 10,
+              left: 10,
+              right: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                ),
+                controller: _titleController,
               ),
-              controller: _titleController,
-            ),
-            TextField(
-              keyboardType: TextInputType.numberWithOptions(),
-              onSubmitted: (_) {
-                _submit();
-              },
-              decoration: InputDecoration(
-                labelText: 'Amount',
+              TextField(
+                keyboardType: TextInputType.numberWithOptions(),
+                onSubmitted: (_) {
+                  _submit();
+                },
+                decoration: InputDecoration(
+                  labelText: 'Amount',
+                ),
+                controller: _amountController,
               ),
-              controller: _amountController,
-            ),
-            Container(
-              height: 70,
-              child: Row(
-                children: <Widget>[
-                  Text(_dateTime == null
-                      ? 'No Date Chosen'
-                      : DateFormat.yMd('en_US').format(_dateTime)),
-                  FlatButton(
-                    textColor: Theme.of(context).primaryColor,
-                    child: Text(
-                      'Choose Date',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: _showDatePicker,
-                  )
-                ],
+              Container(
+                height: 70,
+                child: Row(
+                  children: <Widget>[
+                    Text(_dateTime == null
+                        ? 'No Date Chosen'
+                        : DateFormat.yMd('en_US').format(_dateTime)),
+                    FlatButton(
+                      textColor: Theme.of(context).primaryColor,
+                      child: Text(
+                        'Choose Date',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: _showDatePicker,
+                    )
+                  ],
+                ),
               ),
-            ),
-            RaisedButton(
-              color: Theme.of(context).primaryColor,
-              child: Text(
-                'Add Transaction',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-              onPressed: () => _submit(),
-            )
-          ],
+              RaisedButton(
+                color: Theme.of(context).primaryColor,
+                child: Text(
+                  'Add Transaction',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                onPressed: () => _submit(),
+              )
+            ],
+          ),
         ),
+        elevation: 10,
       ),
-      elevation: 10,
     );
   }
 }

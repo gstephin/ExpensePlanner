@@ -1,11 +1,19 @@
 import 'package:expense_planner/widgets/chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 import 'db_expense.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeLeft
+  ]);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -65,36 +73,49 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var mediaQuery = MediaQuery.of(context);
+    final appBar = AppBar(
+      title: Text('Expense Planner'),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () => _addNewTxn(context),
+          icon: Icon(Icons.add),
+        )
+      ],
+    );
+
     return FutureBuilder(
         future: DatabaseHelper.instance.listTx(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           return Scaffold(
-            appBar: AppBar(
-              title: Text('Expense Planner'),
-              actions: <Widget>[
-                IconButton(
-                  onPressed: () => _addNewTxn(context),
-                  icon: Icon(Icons.add),
-                )
-              ],
-            ),
+            appBar: appBar,
             body: SingleChildScrollView(
               child: Column(
                 // mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Card(
-                    child: Container(
-                      child: snapshot.hasData
-                          ? Chart(snapshot.data)
-                          : Text('No Data'),
-                      width: double.infinity,
+                  Container(
+                    height: (mediaQuery.size.height -
+                        mediaQuery.padding.top -
+                            appBar.preferredSize.height) *
+                        .3,
+                    child: Card(
+                      child: Container(
+                        child: snapshot.hasData
+                            ? Chart(snapshot.data)
+                            : Text('No Data'),
+                        width: double.infinity,
+                      ),
+                      elevation: 30,
+                      color: Colors.blue,
                     ),
-                    clipBehavior: Clip.antiAlias,
-                    elevation: 30,
-                    color: Colors.blue,
                   ),
-                  TransactionList(snapshot.data, _deleteTxn)
+                  Container(
+                      height: (mediaQuery.size.height -
+                          mediaQuery.padding.top -
+                              appBar.preferredSize.height) *
+                          .7,
+                      child: TransactionList(snapshot.data, _deleteTxn))
                 ],
               ),
             ),
